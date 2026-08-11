@@ -33,6 +33,7 @@ public class ApkDownloadManager {
     private volatile boolean paused;
     private volatile Future<?> activeDownload;
     private volatile String activeVersion = "";
+    private volatile String expectedVersion = "";
 
     public ApkDownloadManager(Activity activity) {
         this.activity = activity;
@@ -42,6 +43,11 @@ public class ApkDownloadManager {
     }
 
     public void downloadAndInstall(String urlString, String fileName) {
+        downloadAndInstall(urlString, fileName, extractVersion(fileName));
+    }
+
+    /** The catalog passes its discovered version so an incorrectly named asset cannot be installed silently. */
+    public void downloadAndInstall(String urlString, String fileName, String expectedMinecraftVersion) {
         if (activeDownload != null && !activeDownload.isDone()) {
             Toast.makeText(activity, "Загрузка уже выполняется", Toast.LENGTH_SHORT).show();
             return;
@@ -49,6 +55,7 @@ public class ApkDownloadManager {
         cancelled = false;
         paused = false;
         activeVersion = extractVersion(fileName);
+        expectedVersion = normalizeVersion(expectedMinecraftVersion);
         DownloadHistoryStore.add(activity, activeVersion, "download", "started", urlString);
         progressDialog.setPaused(false);
         progressDialog.setTitleText("Загрузка Minecraft...");
@@ -188,7 +195,19 @@ public class ApkDownloadManager {
 
         Uri apkUri = Uri.fromFile(apkFile);
         String versionName = ApkUtils.extractMinecraftVersionNameFromUri(activity, apkUri);
-        if ("Error Apk".equals(versionName)) versionName = "unknown";
+        if ("Error Apk".equals(versionName)) {
+            deleteQuietly(apkFile);
+            DownloadHistoryStore.add(activity, activeVersion, "download", "failed", "Downloaded file is not a Minecraft APK");
+            postError("Скачанный файл не является Minecraft APK");
+            return;
+        }
+        if (!expectedVersion.isEmpty() && !expectedVersion.equals(normalizeVersion(versionName))) {
+            String detail = "Expected " + expectedVersion + ", got " + versionName;
+            deleteQuietly(apkFile);
+            DownloadHistoryStore.add(activity, activeVersion, "download", "failed", detail);
+            postError("Версия скачанного APK не совпадает с выбранной: " + detail);
+            return;
+        }
         final String installedVersion = versionName;
         GameVersion existing = findExistingVersion(installedVersion);
         boolean autoBackup = activity.getSharedPreferences("launcher_options", Activity.MODE_PRIVATE)
@@ -294,6 +313,20 @@ public class ApkDownloadManager {
         if (file != null && file.exists()) {
             try { file.delete(); } catch (Exception ignored) { }
         }
+    }
+
+    private static String normalizeVersion(String version) {
+        if (version == null) return "";
+        String[] values = version.replaceAll("[^0-9.]", "").split("\\.");
+        StringBuilder normalized = new StringBuilder();
+        for (String value : values) {
+            if (value.isEmpty()) continue;
+            try {
+                if (normalized.length() > 0) normalized.append('.');
+                normalized.append(Integer.parseInt(value));
+            } catch (NumberFormatException ignored) { return ""; }
+        }
+        return normalized.toString();
     }
 
     private static String extractVersion(String fileName) {

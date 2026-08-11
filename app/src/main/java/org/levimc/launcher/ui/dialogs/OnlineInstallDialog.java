@@ -24,6 +24,7 @@ import org.levimc.launcher.R;
 import org.levimc.launcher.ui.adapter.OnlineVersionAdapter;
 import org.levimc.launcher.util.ApkDownloadManager;
 import org.levimc.launcher.util.PersonalizationManager;
+import org.levimc.launcher.util.GithubMinecraftCatalog;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -45,9 +46,9 @@ public class OnlineInstallDialog extends Dialog {
     private boolean newestFirst = true;
     private String query = "";
 
-    public OnlineInstallDialog(@NonNull Context context, List<OnlineVersionAdapter.OnlineVersion> versions) {
+    public OnlineInstallDialog(@NonNull Context context) {
         super(context);
-        this.allVersions = versions;
+        this.allVersions = new ArrayList<>();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class OnlineInstallDialog extends Dialog {
         recycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
         adapter = new OnlineVersionAdapter(displayVersions, version -> {
             ApkDownloadManager downloadManager = new ApkDownloadManager(getOwnerActivity());
-            downloadManager.downloadAndInstall(version.url, "minecraft_" + version.version + ".apk");
+            downloadManager.downloadAndInstall(version.url, "minecraft_" + version.version + ".apk", version.version);
             dismiss();
         });
         recycler.setAdapter(adapter);
@@ -70,6 +71,7 @@ public class OnlineInstallDialog extends Dialog {
         TextView btnClose = findViewById(R.id.btn_close);
         EditText search = findViewById(R.id.online_version_search);
         Button sort = findViewById(R.id.online_version_sort);
+        TextView catalogStatus = findViewById(R.id.online_catalog_status);
         PersonalizationManager pm = new PersonalizationManager(getContext());
         int accent = pm.getAccentColor();
 
@@ -100,7 +102,7 @@ public class OnlineInstallDialog extends Dialog {
 
         updateTabs(tabRelease, tabBeta, accent);
         filterVersions();
-        resolveSizesInBackground();
+        loadPublishedCatalog(catalogStatus);
 
         Window window = getWindow();
         if (window != null) {
@@ -113,6 +115,32 @@ public class OnlineInstallDialog extends Dialog {
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             window.setAttributes(params);
         }
+    }
+
+    private void loadPublishedCatalog(TextView catalogStatus) {
+        catalogStatus.setText("Loading published APK catalog…");
+        GithubMinecraftCatalog.fetch(new GithubMinecraftCatalog.Callback() {
+            @Override public void onSuccess(List<OnlineVersionAdapter.OnlineVersion> versions) {
+                mainHandler.post(() -> {
+                    if (!isShowing()) return;
+                    allVersions.clear();
+                    allVersions.addAll(versions);
+                    catalogStatus.setText(versions.isEmpty()
+                            ? "No published Minecraft APKs found"
+                            : "Published APKs: " + versions.size());
+                    filterVersions();
+                    resolveSizesInBackground();
+                });
+            }
+
+            @Override public void onError(String message) {
+                mainHandler.post(() -> {
+                    if (!isShowing()) return;
+                    catalogStatus.setText("Could not load APK catalog: " + message);
+                    filterVersions();
+                });
+            }
+        });
     }
 
     private void filterVersions() {

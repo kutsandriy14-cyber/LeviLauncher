@@ -83,6 +83,15 @@
             android:textSize="11sp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/online_catalog_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="Loading published APK catalog…"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/online_versions_recycler"
         android:layout_width="match_parent"

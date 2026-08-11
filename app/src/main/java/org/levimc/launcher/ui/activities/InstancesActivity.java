@@ -307,50 +307,7 @@ public class InstancesActivity extends BaseActivity {
     }
 
     private void showOnlineInstallDialog() {
-        List<org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion> versions = new ArrayList<>();
-        // Release versions (all versions)
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.81.02", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-81-02-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.90.03", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-90-03-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.92.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-92-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.93.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-93-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.94.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-94-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.60.10", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-60-10-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.61.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-61-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.62.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-62-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.70.03", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-70-03-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.71.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-71-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.80.03", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-80-03-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.72.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-72-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.123.02", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-123-02-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.124.02", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-124-02-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.130.03", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-130-03-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.131.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-131-01-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.132.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-132-01-xbox-servers-compressed.1.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.113.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-113-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.114.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-114-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.120.04", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-120-04-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.121.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-121-01-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.100.06", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-100-06-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.21.101.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-21-101-01-arm64-v8a-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.13.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-13-01-xbox-servers-compressed.2.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.12.02", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-12-02-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.3.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-26-3-01-xbox-servers-compressed.2.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.2.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-26-2-01-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.10.04", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-1-26-10-04-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.30.05", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-30-05-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.23.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-23-01-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.22.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-22-01-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.21.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-21-01-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.20.04", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-20-04-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.32.02", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-32-02-xbox-servers-compressed.apk", false));
-        versions.add(new org.levimc.launcher.ui.adapter.OnlineVersionAdapter.OnlineVersion("1.26.31.01", "https://github.com/kutsandriy14-cyber/Apk-download/releases/download/Minecraft/minecraft-26-31-01-xbox-servers-compressed.apk", false));
-        
-        // Beta versions - empty
-        
-        // Sorting logic
-        Collections.sort(versions, (v1, v2) -> compareVersions(v2.version, v1.version));
-        
-        org.levimc.launcher.ui.dialogs.OnlineInstallDialog dialog = new org.levimc.launcher.ui.dialogs.OnlineInstallDialog(this, versions);
+        org.levimc.launcher.ui.dialogs.OnlineInstallDialog dialog = new org.levimc.launcher.ui.dialogs.OnlineInstallDialog(this);
         dialog.setOwnerActivity(this);
         dialog.show();
     }

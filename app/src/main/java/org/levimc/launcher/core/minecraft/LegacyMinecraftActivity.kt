@@ -86,6 +86,21 @@ class LegacyMinecraftActivity : NativeActivity() {
         return if (type.isNullOrEmpty()) base else File(base, type).also { it.mkdirs() }
     }
 
+    /** JNI callbacks used by legacy libminecraftpe.so; NativeActivity does not provide them itself. */
+    fun getInternalStoragePath(): String = getFilesDir().absolutePath
+
+    /** JNI callbacks used by legacy libminecraftpe.so; NativeActivity does not provide them itself. */
+    fun getExternalStoragePath(): String = (getExternalFilesDir(null) ?: getFilesDir()).absolutePath
+
+    override fun getDatabasePath(name: String): File {
+        val directory = File(getDataDir(), "databases")
+        if (!directory.exists()) directory.mkdirs()
+        return File(directory, name)
+    }
+
+    override fun getCacheDir(): File =
+        resolveStorageDir(MinecraftLauncher.EXTRA_STORAGE_CACHE_DIR, super.getCacheDir())
+
     override fun onNewIntent(intent: Intent) {
         setIntent(intent)
         super.onNewIntent(intent)
