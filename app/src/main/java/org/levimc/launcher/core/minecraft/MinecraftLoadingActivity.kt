@@ -140,10 +140,15 @@ class MinecraftLoadingActivity : BaseActivity(), MinecraftRuntimePreparer.Progre
     private fun startPreparing() {
         executor.execute {
             try {
-                val gameIntent = Intent(intent).apply {
-                    setClass(this@MinecraftLoadingActivity, MinecraftActivity::class.java)
-                }
+                val gameIntent = Intent(intent)
                 val preparedRuntime = MinecraftRuntimePreparer.prepare(this, gameIntent, this)
+                val gameActivity = if (MinecraftActivityCompatibility.usesLegacyNativeActivity(preparedRuntime.version)) {
+                    trace.mark("Using NativeActivity compatibility path", preparedRuntime.version?.versionCode ?: "unknown")
+                    LegacyMinecraftActivity::class.java
+                } else {
+                    MinecraftActivity::class.java
+                }
+                gameIntent.setClass(this@MinecraftLoadingActivity, gameActivity)
                 MinecraftLaunchSession.setPreparedRuntime(preparedRuntime)
 
                 mainHandler.post {

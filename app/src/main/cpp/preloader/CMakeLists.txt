@@ -14,6 +14,7 @@ set(PRELOADER_SOURCES
         src/pl/runtime/InputBridge.cpp
         src/pl/runtime/JavaRuntime.cpp
         src/pl/runtime/GameActivityBridge.cpp
+        src/pl/runtime/LegacyNativeActivityBridge.cpp
 )
 
 add_library(preloader SHARED ${PRELOADER_SOURCES})
