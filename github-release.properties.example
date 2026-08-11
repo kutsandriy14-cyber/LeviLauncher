@@ -1,0 +1,4 @@
+# Configure these values before building a release.
+# The launcher checks only this repository's public GitHub Releases.
+github.owner=YOUR_GITHUB_OWNER
+github.repo=YOUR_PUBLIC_REPOSITORY

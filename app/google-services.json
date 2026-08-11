@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "308665022924",
+    "project_id": "levi-launcher-eaeb2",
+    "storage_bucket": "levi-launcher-eaeb2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308665022924:android:c77c92d20b0da1bb5e4569",
+        "android_client_info": {
+          "package_name": "org.levimc.launcher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6PM_INlxoGIGabwZzhjCwIsjduyxooKA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

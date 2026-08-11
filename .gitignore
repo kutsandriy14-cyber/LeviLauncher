@@ -1,0 +1,9 @@
+signing/
+local.properties
+.gradle/
+**/build/
+**/.cxx/
+**/.kotlin/
+.idea/
+*.iml
+*.apk
