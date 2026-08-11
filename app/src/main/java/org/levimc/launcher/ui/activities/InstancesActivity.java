@@ -1039,6 +1039,7 @@ public class InstancesActivity extends BaseActivity {
             holder.versionCode.setText(v.versionCode != null ? v.versionCode : v.directoryName);
             holder.versionCode.setTextColor(primaryTextColor);
             holder.displayName.setTextColor(secondaryTextColor);
+            holder.metadata.setTextColor(secondaryTextColor);
             holder.settingsIcon.setImageTintList(ColorStateList.valueOf(secondaryTextColor));
 
             if (v.isInstalled) {
@@ -1071,6 +1072,7 @@ public class InstancesActivity extends BaseActivity {
                 displayLabel = holder.itemView.getContext().getString(R.string.vanilla_prefix, v.versionCode != null ? v.versionCode : "");
             }
             holder.displayName.setText(displayLabel);
+            holder.metadata.setText(buildMetadata(holder.itemView.getContext(), v));
 
             holder.settingsIcon.setOnClickListener(iv -> {
                 if (settingsListener != null) settingsListener.onClick(v);
@@ -1081,6 +1083,46 @@ public class InstancesActivity extends BaseActivity {
             });
 
             DynamicAnim.applyPressScale(holder.itemView);
+        }
+
+        private static String buildMetadata(Context context, GameVersion version) {
+            String profileId = version.directoryName == null ? "default" : version.directoryName;
+            java.io.File root = org.levimc.launcher.util.LauncherStorage.getVersionRoot(context, profileId);
+            java.io.File gameData = org.levimc.launcher.util.LauncherStorage.getProfileGameDataDir(context, profileId, true);
+            java.io.File worldsDir = new java.io.File(gameData, "minecraftWorlds");
+            java.io.File modsDir = org.levimc.launcher.util.LauncherStorage.getProfileModsDir(context, profileId);
+            int worlds = countDirectories(worldsDir);
+            int mods = countFiles(modsDir);
+            String date = root.lastModified() > 0L
+                    ? java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT).format(new java.util.Date(root.lastModified()))
+                    : "—";
+            return formatBytes(directorySize(root)) + " · " + date + " · " + worlds + " worlds · " + mods + " mods";
+        }
+
+        private static int countDirectories(java.io.File directory) {
+            java.io.File[] children = directory.listFiles(java.io.File::isDirectory);
+            return children == null ? 0 : children.length;
+        }
+
+        private static int countFiles(java.io.File directory) {
+            java.io.File[] children = directory.listFiles(java.io.File::isFile);
+            return children == null ? 0 : children.length;
+        }
+
+        private static long directorySize(java.io.File root) {
+            if (root == null || !root.exists()) return 0L;
+            if (root.isFile()) return root.length();
+            java.io.File[] children = root.listFiles();
+            if (children == null) return 0L;
+            long total = 0L;
+            for (java.io.File child : children) total += directorySize(child);
+            return total;
+        }
+
+        private static String formatBytes(long bytes) {
+            if (bytes < 1024L) return bytes + " B";
+            double value = bytes / 1048576d;
+            return String.format(java.util.Locale.getDefault(), "%.1f MB", value);
         }
 
         private static boolean isDarkMode(Context context) {
@@ -1103,7 +1145,7 @@ public class InstancesActivity extends BaseActivity {
         }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView versionCode, typeTag, displayName;
+            TextView versionCode, typeTag, displayName, metadata;
             ImageView settingsIcon;
 
             VH(View v) {
@@ -1111,6 +1153,7 @@ public class InstancesActivity extends BaseActivity {
                 versionCode = v.findViewById(R.id.card_version_code);
                 typeTag = v.findViewById(R.id.card_type_tag);
                 displayName = v.findViewById(R.id.card_display_name);
+                metadata = v.findViewById(R.id.card_metadata);
                 settingsIcon = v.findViewById(R.id.card_settings_icon);
             }
         }

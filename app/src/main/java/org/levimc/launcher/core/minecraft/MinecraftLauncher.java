@@ -106,7 +106,7 @@ public class MinecraftLauncher {
                                 patch = Integer.parseInt(patchStr);
                             }
                         }
-                        if (major < 1 || (major == 1 && minor < 21) || (major == 1 && minor == 21 && patch < 80)) {
+                        if (major < 1 || (major == 1 && minor < 16)) {
                             activity.runOnUiThread(() -> {
                                 new org.levimc.launcher.ui.dialogs.CustomAlertDialog(activity)
                                         .setTitleText(activity.getString(org.levimc.launcher.R.string.unsupported_version_title))

@@ -708,7 +708,7 @@ LeviLauncher जारी रखने से पहले माइग्रे
     <string name="clear">साफ़ करें</string>
 
     <string name="unsupported_version_title">असमर्थित संस्करण</string>
-    <string name="unsupported_version_msg">यह लॉन्चर 1.21.80 से पुराने Minecraft संस्करणों का समर्थन नहीं करता है।</string>
+    <string name="unsupported_version_msg">यह लॉन्चर 1.16.0 से पुराने Minecraft संस्करणों का समर्थन नहीं करता है।</string>
     <!-- Mod Config -->
     <string name="mod_author_byline">%s द्वारा</string>
     <string name="mod_version_chip">संस्करण %s</string>

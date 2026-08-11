@@ -182,28 +182,90 @@ public class InstanceSettingsActivity extends BaseActivity {
     }
 
     private void confirmDelete() {
-        new CustomAlertDialog(this)
-                .setTitleText(getString(R.string.instance_delete_confirm_title))
-                .setMessage(getString(R.string.instance_delete_confirm_msg))
-                .setPositiveButton(getString(R.string.delete), v -> {
-                    versionManager.deleteCustomVersion(version, new VersionManager.OnDeleteVersionCallback() {
-                        @Override
-                        public void onDeleteCompleted(boolean success) {
-                            runOnUiThread(() -> {
-                                setResult(RESULT_OK);
-                                finish();
-                            });
-                        }
+        android.widget.LinearLayout choices = new android.widget.LinearLayout(this);
+        choices.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int padding = (int) (18 * getResources().getDisplayMetrics().density);
+        choices.setPadding(padding, 0, padding, 0);
+        android.widget.CheckBox keepData = new android.widget.CheckBox(this);
+        keepData.setText("Keep worlds, settings and resource packs in a backup folder");
+        keepData.setChecked(true);
+        android.widget.CheckBox keepMods = new android.widget.CheckBox(this);
+        keepMods.setText("Keep mods in a backup folder");
+        keepMods.setChecked(true);
+        choices.addView(keepData);
+        choices.addView(keepMods);
 
-                        @Override
-                        public void onDeleteFailed(Exception e) {
-                            runOnUiThread(() -> Toast.makeText(InstanceSettingsActivity.this,
-                                    "Delete failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
-                    });
-                })
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.instance_delete_confirm_title))
+                .setMessage(getString(R.string.instance_delete_confirm_msg))
+                .setView(choices)
+                .setPositiveButton(getString(R.string.delete), (dialog, which) ->
+                        preserveThenDelete(keepData.isChecked(), keepMods.isChecked()))
                 .setNegativeButton(getString(R.string.cancel), null)
                 .show();
+    }
+
+    private void preserveThenDelete(boolean keepData, boolean keepMods) {
+        if (!keepData && !keepMods) {
+            deleteInstanceNow();
+            return;
+        }
+        Toast.makeText(this, "Preparing selected data backup…", Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            try {
+                String profileId = version.directoryName == null ? "default" : version.directoryName;
+                java.io.File root = new java.io.File(org.levimc.launcher.util.LauncherStorage.getBackupsRoot(this),
+                        "preserved_" + profileId + "_" + System.currentTimeMillis());
+                if (keepData) {
+                    copyTree(org.levimc.launcher.util.LauncherStorage.getProfileGameDataDir(this, profileId, true),
+                            new java.io.File(root, "game_data"));
+                    copyTree(org.levimc.launcher.util.LauncherStorage.getProfileGameDataDir(this, profileId, false),
+                            new java.io.File(root, "game_data_internal"));
+                }
+                if (keepMods) {
+                    copyTree(org.levimc.launcher.util.LauncherStorage.getProfileModsDir(this, profileId),
+                            new java.io.File(root, "mods"));
+                }
+                runOnUiThread(this::deleteInstanceNow);
+            } catch (Exception error) {
+                runOnUiThread(() -> Toast.makeText(this,
+                        "Could not preserve selected data: " + error.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }, "preserve-instance-data").start();
+    }
+
+    private void deleteInstanceNow() {
+        versionManager.deleteCustomVersion(version, new VersionManager.OnDeleteVersionCallback() {
+            @Override public void onDeleteCompleted(boolean success) {
+                runOnUiThread(() -> {
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+            @Override public void onDeleteFailed(Exception error) {
+                runOnUiThread(() -> Toast.makeText(InstanceSettingsActivity.this,
+                        "Delete failed: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private static void copyTree(java.io.File source, java.io.File target) throws java.io.IOException {
+        if (source == null || !source.exists()) return;
+        if (source.isDirectory()) {
+            if (!target.exists() && !target.mkdirs()) throw new java.io.IOException("Cannot create " + target);
+            java.io.File[] children = source.listFiles();
+            if (children == null) return;
+            for (java.io.File child : children) copyTree(child, new java.io.File(target, child.getName()));
+            return;
+        }
+        java.io.File parent = target.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) throw new java.io.IOException("Cannot create " + parent);
+        try (java.io.InputStream input = new java.io.FileInputStream(source);
+             java.io.OutputStream output = new java.io.FileOutputStream(target)) {
+            byte[] buffer = new byte[131072];
+            int count;
+            while ((count = input.read(buffer)) != -1) output.write(buffer, 0, count);
+        }
     }
 
     private void confirmBackup() {

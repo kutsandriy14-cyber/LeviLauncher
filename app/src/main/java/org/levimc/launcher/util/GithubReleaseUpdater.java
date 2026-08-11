@@ -31,8 +31,11 @@ import okhttp3.Response;
 public class GithubReleaseUpdater {
     private static final String TAG = "GithubReleaseUpdater";
     private static final String GITHUB_LATEST_API = "https://api.github.com/repos/%s/%s/releases/latest";
+    private static final String GITHUB_RELEASES_API = "https://api.github.com/repos/%s/%s/releases";
     private static final String APK_ASSET_KEYWORD = ".apk";
     private static final String PREF_IGNORED_VERSION = "update_ignored_version";
+    private static final String OPTIONS_PREFS = "launcher_options";
+    private static final String KEY_UPDATE_CHANNEL = "update_channel";
     private final Activity activity;
     private final String owner;
     private final String repo;
@@ -54,8 +57,8 @@ public class GithubReleaseUpdater {
         String[] y = b.split("\\.");
         int len = Math.max(x.length, y.length);
         for (int i = 0; i < len; i++) {
-            int vi = i < x.length ? Integer.parseInt(x[i]) : 0;
-            int vj = i < y.length ? Integer.parseInt(y[i]) : 0;
+            int vi = i < x.length ? numericPart(x[i]) : 0;
+            int vj = i < y.length ? numericPart(y[i]) : 0;
             if (vi > vj) return 1;
             if (vi < vj) return -1;
         }
@@ -63,90 +66,74 @@ public class GithubReleaseUpdater {
     }
 
     public void checkUpdate() {
-        String url = String.format(GITHUB_LATEST_API, owner, repo);
+        checkForUpdate(false);
+    }
+
+    public void checkUpdateOnLaunch() {
+        checkForUpdate(true);
+    }
+
+    private void checkForUpdate(boolean silent) {
+        boolean beta = "beta".equals(activity.getSharedPreferences(OPTIONS_PREFS, Context.MODE_PRIVATE)
+                .getString(KEY_UPDATE_CHANNEL, "stable"));
+        String url = String.format(beta ? GITHUB_RELEASES_API : GITHUB_LATEST_API, owner, repo);
         Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "Request failed: " + e.getMessage());
+            @Override public void onFailure(Call call, IOException error) {
+                Log.e(TAG, "Request failed: " + error.getMessage());
             }
 
-            @Override
-            public void onResponse(Call call, Response response) {
+            @Override public void onResponse(Call call, Response response) {
                 try {
-                    String body = response.body().string();
-                    JSONObject json = new JSONObject(body);
-                    String latestVersion = json.getString("tag_name");
-                    JSONArray assets = json.getJSONArray("assets");
+                    if (!response.isSuccessful() || response.body() == null) throw new IOException("GitHub HTTP " + response.code());
+                    JSONObject release = selectRelease(response.body().string(), beta);
+                    if (release == null) throw new IOException("No release found for channel");
+                    String latestVersion = release.getString("tag_name");
+                    JSONArray assets = release.getJSONArray("assets");
                     String downloadUrl = null;
                     for (int i = 0; i < assets.length(); i++) {
                         JSONObject asset = assets.getJSONObject(i);
                         String name = asset.getString("name");
-                        if (name.endsWith(APK_ASSET_KEYWORD)) {
+                        if (name.toLowerCase().endsWith(APK_ASSET_KEYWORD)) {
                             downloadUrl = asset.getString("browser_download_url");
                             break;
                         }
                     }
-                    if (downloadUrl == null) {
-                        Log.e(TAG, "No APK asset found in release.");
-                        return;
-                    }
+                    if (downloadUrl == null) throw new IOException("No APK asset found in release");
                     String localVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
                     if (compareVersion(latestVersion, localVersion) > 0) {
-                        showUpdateDialog(latestVersion, downloadUrl);
-                    } else {
-                        activity.runOnUiThread(() ->
-                                Toast.makeText(activity, activity.getString(R.string.already_latest_version, localVersion), Toast.LENGTH_SHORT).show());
+                        if (silent) {
+                            SharedPreferences prefs = activity.getSharedPreferences("no_update_version", Context.MODE_PRIVATE);
+                            if (!latestVersion.equals(prefs.getString(PREF_IGNORED_VERSION, ""))) showUpdateDialogWithIgnore(latestVersion, downloadUrl);
+                        } else {
+                            showUpdateDialog(latestVersion, downloadUrl);
+                        }
+                    } else if (!silent) {
+                        activity.runOnUiThread(() -> Toast.makeText(activity,
+                                activity.getString(R.string.already_latest_version, localVersion), Toast.LENGTH_SHORT).show());
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, "Parse error: " + e.getMessage());
+                } catch (Exception error) {
+                    Log.e(TAG, "Update parse error", error);
                 }
             }
         });
     }
 
-    public void checkUpdateOnLaunch() {
-        String url = String.format(GITHUB_LATEST_API, owner, repo);
-        Request request = new Request.Builder().url(url).build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "Request failed: " + e.getMessage());
-            }
+    private JSONObject selectRelease(String body, boolean betaChannel) throws Exception {
+        if (!betaChannel) return new JSONObject(body);
+        JSONArray releases = new JSONArray(body);
+        for (int i = 0; i < releases.length(); i++) {
+            JSONObject release = releases.getJSONObject(i);
+            if (!release.optBoolean("draft", false)) return release;
+        }
+        return null;
+    }
 
-            @Override
-            public void onResponse(Call call, Response response) {
-                try {
-                    String body = response.body().string();
-                    JSONObject json = new JSONObject(body);
-                    String latestVersion = json.getString("tag_name");
-                    JSONArray assets = json.getJSONArray("assets");
-                    String downloadUrl = null;
-                    for (int i = 0; i < assets.length(); i++) {
-                        JSONObject asset = assets.getJSONObject(i);
-                        String name = asset.getString("name");
-                        if (name.endsWith(APK_ASSET_KEYWORD)) {
-                            downloadUrl = asset.getString("browser_download_url");
-                            break;
-                        }
-                    }
-                    if (downloadUrl == null) {
-                        Log.e(TAG, "No APK asset found in release.");
-                        return;
-                    }
-                    String localVersion = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
-                    SharedPreferences prefs = activity.getSharedPreferences("no_update_version", Context.MODE_PRIVATE);
-                    String ignoredVersion = prefs.getString(PREF_IGNORED_VERSION, "");
-
-                    if (compareVersion(latestVersion, localVersion) > 0
-                            && !ignoredVersion.equals(latestVersion)) {
-                        showUpdateDialogWithIgnore(latestVersion, downloadUrl);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Parse error: " + e.getMessage());
-                }
-            }
-        });
+    private static int numericPart(String part) {
+        String digits = part.replaceAll("[^0-9].*$", "");
+        if (digits.isEmpty()) return 0;
+        try { return Integer.parseInt(digits); }
+        catch (NumberFormatException ignored) { return 0; }
     }
 
     private void showUpdateDialog(String version, String url) {

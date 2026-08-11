@@ -31,6 +31,9 @@ public class InstallProgressDialog extends Dialog {
     private ValueAnimator progressAnimator;
     private int currentProgress;
     private Runnable cancelAction;
+    private Runnable pauseAction;
+    private Button pauseButton;
+    private boolean paused;
 
     public InstallProgressDialog(Context context) {
         super(context);
@@ -47,6 +50,16 @@ public class InstallProgressDialog extends Dialog {
         progressText = findViewById(R.id.tv_progress_percent);
         titleText = findViewById(R.id.tv_title);
         statusText = findViewById(R.id.tv_progress_status);
+        pauseButton = findViewById(R.id.btn_pause_download);
+        if (pauseButton != null) {
+            pauseButton.setText(paused ? "Resume" : "Pause");
+            pauseButton.setOnClickListener(v -> {
+                paused = !paused;
+                pauseButton.setText(paused ? "Resume" : "Pause");
+                Runnable action = pauseAction;
+                if (action != null) action.run();
+            });
+        }
         Button cancelButton = findViewById(R.id.btn_cancel_download);
         if (cancelButton != null) {
             cancelButton.setOnClickListener(v -> {
@@ -131,6 +144,16 @@ public class InstallProgressDialog extends Dialog {
 
     public void setCancelAction(Runnable action) {
         cancelAction = action;
+    }
+
+    /** Toggles between pause and resume without discarding the .part download file. */
+    public void setPauseAction(Runnable action) {
+        pauseAction = action;
+    }
+
+    public void setPaused(boolean value) {
+        paused = value;
+        if (pauseButton != null) pauseButton.setText(paused ? "Resume" : "Pause");
     }
 
     private void updateProgressText(int progress) {

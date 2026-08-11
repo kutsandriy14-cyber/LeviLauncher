@@ -675,6 +675,34 @@ public class SettingsActivity extends BaseActivity {
 
         Button btnCheckUpdate = findViewById(R.id.btn_check_update);
         btnCheckUpdate.setOnClickListener(v -> handleUpdateButtonClick());
+
+        android.content.SharedPreferences options = getSharedPreferences("launcher_options", MODE_PRIVATE);
+        android.widget.RadioGroup channelGroup = findViewById(R.id.update_channel_group);
+        if (channelGroup != null) {
+            boolean beta = "beta".equals(options.getString("update_channel", "stable"));
+            channelGroup.check(beta ? R.id.update_channel_beta : R.id.update_channel_stable);
+            channelGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                String channel = checkedId == R.id.update_channel_beta ? "beta" : "stable";
+                options.edit().putString("update_channel", channel).apply();
+                Toast.makeText(this, "Update channel: " + channel, Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        androidx.appcompat.widget.SwitchCompat developerMode = findViewById(R.id.switch_developer_mode);
+        if (developerMode != null) {
+            developerMode.setChecked(options.getBoolean("developer_mode", false));
+            developerMode.setOnCheckedChangeListener((button, checked) ->
+                    options.edit().putBoolean("developer_mode", checked).apply());
+        }
+        androidx.appcompat.widget.SwitchCompat autoBackup = findViewById(R.id.switch_auto_backup_update);
+        if (autoBackup != null) {
+            autoBackup.setChecked(options.getBoolean("auto_backup_before_update", true));
+            autoBackup.setOnCheckedChangeListener((button, checked) ->
+                    options.edit().putBoolean("auto_backup_before_update", checked).apply());
+        }
+        Button diagnostics = findViewById(R.id.btn_open_diagnostics);
+        if (diagnostics != null) diagnostics.setOnClickListener(v ->
+                startActivity(new Intent(this, DiagnosticsActivity.class)));
     }
 
     private void setupMigrationSection() {

@@ -681,7 +681,7 @@ LeviLauncher を続行するには移行を完了する必要があります。<
     <string name="clear">クリア</string>
 
     <string name="unsupported_version_title">サポートされていないバージョン</string>
-    <string name="unsupported_version_msg">このランチャーは1.21.80より前のMinecraftバージョンをサポートしていません。</string>
+    <string name="unsupported_version_msg">このランチャーは1.16.0より前のMinecraftバージョンをサポートしていません。</string>
     <!-- Mod Config -->
     <string name="mod_author_byline">by %s</string>
     <string name="mod_version_chip">バージョン %s</string>

@@ -681,7 +681,7 @@ La migración debe completarse antes de continuar con LeviLauncher.</string>
     <string name="clear">Limpiar</string>
 
     <string name="unsupported_version_title">Versión no soportada</string>
-    <string name="unsupported_version_msg">Este lanzador no soporta versiones de Minecraft anteriores a 1.21.80.</string>
+    <string name="unsupported_version_msg">Este lanzador no soporta versiones de Minecraft anteriores a 1.16.0.</string>
     <!-- Mod Config -->
     <string name="mod_author_byline">por %s</string>
     <string name="mod_version_chip">Versión %s</string>

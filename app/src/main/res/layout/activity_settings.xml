@@ -753,6 +753,68 @@
                             android:paddingHorizontal="20dp"
                             android:textAllCaps="false" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/card_background"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Update channel"
+                            android:textColor="@color/on_surface"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/update_channel_group"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:orientation="horizontal">
+                            <RadioButton
+                                android:id="@+id/update_channel_stable"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Stable" />
+                            <RadioButton
+                                android:id="@+id/update_channel_beta"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:text="Beta" />
+                        </RadioGroup>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_developer_mode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Developer mode: collect extra local diagnostics"
+                            android:textColor="@color/on_surface" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_auto_backup_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Back up an existing instance before update"
+                            android:textColor="@color/on_surface" />
+
+                        <Button
+                            android:id="@+id/btn_open_diagnostics"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="10dp"
+                            android:backgroundTint="@color/primary"
+                            android:text="Open diagnostics and copy log"
+                            android:textAllCaps="false"
+                            android:textColor="@color/on_primary" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

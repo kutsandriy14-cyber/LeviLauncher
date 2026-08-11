@@ -68,6 +68,41 @@
             tools:ignore="DiscouragedApi" />
 
         <activity
+            android:name="org.levimc.launcher.ui.activities.LauncherToolsActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="fontScale|density|smallestScreenSize|screenSize|uiMode|screenLayout|orientation|navigation|keyboardHidden|keyboard|touchscreen|locale|mnc|mcc"
+            tools:ignore="DiscouragedApi" />
+
+        <activity
+            android:name="org.levimc.launcher.ui.activities.DiagnosticsActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="fontScale|density|smallestScreenSize|screenSize|uiMode|screenLayout|orientation|navigation|keyboardHidden|keyboard|touchscreen|locale|mnc|mcc"
+            tools:ignore="DiscouragedApi" />
+
+        <activity
+            android:name="org.levimc.launcher.ui.activities.DownloadHistoryActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="fontScale|density|smallestScreenSize|screenSize|uiMode|screenLayout|orientation|navigation|keyboardHidden|keyboard|touchscreen|locale|mnc|mcc"
+            tools:ignore="DiscouragedApi" />
+
+        <activity
+            android:name="org.levimc.launcher.ui.activities.BackupCenterActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="fontScale|density|smallestScreenSize|screenSize|uiMode|screenLayout|orientation|navigation|keyboardHidden|keyboard|touchscreen|locale|mnc|mcc"
+            tools:ignore="DiscouragedApi" />
+
+        <activity
+            android:name="org.levimc.launcher.ui.activities.ModProfilesActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="fontScale|density|smallestScreenSize|screenSize|uiMode|screenLayout|orientation|navigation|keyboardHidden|keyboard|touchscreen|locale|mnc|mcc"
+            tools:ignore="DiscouragedApi" />
+
+        <activity
             android:name="org.levimc.launcher.ui.activities.ContentManagementActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape"

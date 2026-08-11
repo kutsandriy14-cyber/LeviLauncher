@@ -705,7 +705,7 @@
     <string name="clear">Очистить</string>
 
     <string name="unsupported_version_title">Неподдерживаемая версия</string>
-    <string name="unsupported_version_msg">Этот лаунчер не поддерживает версии Minecraft старше 1.21.80.</string>
+    <string name="unsupported_version_msg">Этот лаунчер не поддерживает версии Minecraft старше 1.16.0.</string>
     <!-- Mod Config -->
     <string name="mod_author_byline">от %s</string>
     <string name="mod_version_chip">Версия %s</string>

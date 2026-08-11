@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import org.levimc.launcher.core.versions.GameVersion;
 import org.levimc.launcher.core.versions.VersionManager;
 import org.levimc.launcher.ui.dialogs.InstallProgressDialog;
 
@@ -21,18 +22,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/** Downloads Minecraft APKs safely: partial files survive a pause only, not an error or cancellation. */
 public class ApkDownloadManager {
     private final Activity activity;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final InstallProgressDialog progressDialog;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Object pauseLock = new Object();
     private volatile boolean cancelled;
+    private volatile boolean paused;
     private volatile Future<?> activeDownload;
+    private volatile String activeVersion = "";
 
     public ApkDownloadManager(Activity activity) {
         this.activity = activity;
         this.progressDialog = new InstallProgressDialog(activity);
         this.progressDialog.setCancelAction(this::cancelDownload);
+        this.progressDialog.setPauseAction(this::togglePause);
     }
 
     public void downloadAndInstall(String urlString, String fileName) {
@@ -41,6 +47,10 @@ public class ApkDownloadManager {
             return;
         }
         cancelled = false;
+        paused = false;
+        activeVersion = extractVersion(fileName);
+        DownloadHistoryStore.add(activity, activeVersion, "download", "started", urlString);
+        progressDialog.setPaused(false);
         progressDialog.setTitleText("Загрузка Minecraft...");
         progressDialog.setStatusText("Подключение...");
         progressDialog.setProgress(0);
@@ -48,16 +58,51 @@ public class ApkDownloadManager {
         activeDownload = executor.submit(() -> download(urlString, fileName));
     }
 
+    /** Cancelling deletes the unfinished .part file so no invalid APK is left behind. */
     public void cancelDownload() {
         cancelled = true;
+        synchronized (pauseLock) {
+            paused = false;
+            pauseLock.notifyAll();
+        }
         Future<?> future = activeDownload;
         if (future != null) future.cancel(true);
-        postCancelled();
+    }
+
+    /** Pausing intentionally keeps the .part file and resumes with HTTP Range when possible. */
+    public void togglePause() {
+        if (cancelled || activeDownload == null || activeDownload.isDone()) return;
+        synchronized (pauseLock) {
+            paused = !paused;
+            if (!paused) pauseLock.notifyAll();
+        }
+        progressDialog.setPaused(paused);
+        postUi(() -> {
+            if (progressDialog.isShowing()) {
+                progressDialog.setStatusText(paused ? "Загрузка приостановлена" : "Продолжение загрузки...");
+            }
+        });
+        DownloadHistoryStore.add(activity, activeVersion, "download", paused ? "paused" : "resumed", "");
+    }
+
+    private void awaitIfPaused() throws DownloadCancelledException {
+        synchronized (pauseLock) {
+            while (paused && !cancelled) {
+                try {
+                    pauseLock.wait(500L);
+                } catch (InterruptedException error) {
+                    Thread.currentThread().interrupt();
+                    throw new DownloadCancelledException();
+                }
+            }
+        }
+        if (cancelled || Thread.currentThread().isInterrupted()) throw new DownloadCancelledException();
     }
 
     private void download(String urlString, String fileName) {
         File downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "levi apk");
         if (!downloadDir.exists() && !downloadDir.mkdirs()) {
+            DownloadHistoryStore.add(activity, activeVersion, "download", "failed", "Не удалось создать папку загрузок");
             postError("Не удалось создать папку загрузок");
             return;
         }
@@ -91,7 +136,7 @@ public class ApkDownloadManager {
                 long downloaded = offset;
                 int count;
                 while ((count = input.read(buffer)) != -1) {
-                    if (cancelled || Thread.currentThread().isInterrupted()) throw new DownloadCancelledException();
+                    awaitIfPaused();
                     output.write(buffer, 0, count);
                     downloaded += count;
                     if (totalLength > 0L) {
@@ -103,20 +148,31 @@ public class ApkDownloadManager {
                 }
             }
 
-            if (cancelled) throw new DownloadCancelledException();
+            awaitIfPaused();
             if (totalLength > 0L && partFile.length() != totalLength) {
                 throw new IOException("Файл скачан не полностью");
             }
             if (outputFile.exists() && !outputFile.delete()) throw new IOException("Не удалось заменить старый APK");
             if (!partFile.renameTo(outputFile)) throw new IOException("Не удалось сохранить APK");
+            DownloadHistoryStore.add(activity, activeVersion, "download", "completed", outputFile.getName());
             startAutoInstall(outputFile);
         } catch (DownloadCancelledException cancelledError) {
-            if (partFile.exists()) partFile.delete();
+            deleteQuietly(partFile);
+            DownloadHistoryStore.add(activity, activeVersion, "download", "cancelled", "");
             postCancelled();
         } catch (Exception error) {
-            // Only the .part file can remain after an interrupted network transfer.
-            if (outputFile.exists() && outputFile.length() == 0L) outputFile.delete();
-            postError("Ошибка загрузки: " + safeMessage(error));
+            if (cancelled || Thread.currentThread().isInterrupted()) {
+                deleteQuietly(partFile);
+                DownloadHistoryStore.add(activity, activeVersion, "download", "cancelled", "");
+                postCancelled();
+            } else {
+                deleteQuietly(partFile);
+                // A final .apk exists only after the complete download was renamed.
+                if (outputFile.exists() && outputFile.length() == 0L) deleteQuietly(outputFile);
+                String message = "Ошибка загрузки: " + safeMessage(error);
+                DownloadHistoryStore.add(activity, activeVersion, "download", "failed", message);
+                postError(message);
+            }
         } finally {
             if (connection != null) connection.disconnect();
         }
@@ -133,13 +189,62 @@ public class ApkDownloadManager {
         Uri apkUri = Uri.fromFile(apkFile);
         String versionName = ApkUtils.extractMinecraftVersionNameFromUri(activity, apkUri);
         if ("Error Apk".equals(versionName)) versionName = "unknown";
-        final String dirName = "Minecraft_" + versionName;
+        final String installedVersion = versionName;
+        GameVersion existing = findExistingVersion(installedVersion);
+        boolean autoBackup = activity.getSharedPreferences("launcher_options", Activity.MODE_PRIVATE)
+                .getBoolean("auto_backup_before_update", true);
+        if (existing != null && autoBackup) {
+            backupBeforeUpdate(existing, apkFile, installedVersion);
+            return;
+        }
+        installDownloadedApk(apkFile, installedVersion);
+    }
+
+    private void backupBeforeUpdate(GameVersion existing, File apkFile, String installedVersion) {
+        postUi(() -> {
+            if (progressDialog.isShowing()) {
+                progressDialog.setTitleText("Резервная копия...");
+                progressDialog.setStatusText("Сохранение данных перед обновлением Minecraft...");
+                progressDialog.setProgress(0);
+            }
+        });
+        new InstanceBackupManager(activity).backup(existing, new InstanceBackupManager.BackupCallback() {
+            @Override public void onStarted() { }
+            @Override public void onProgress(int progress) { postProgress(progress, "Резервная копия: " + progress + "%"); }
+            @Override public void onSuccess(String path) {
+                DownloadHistoryStore.add(activity, installedVersion, "backup", "completed", path);
+                installDownloadedApk(apkFile, installedVersion);
+            }
+            @Override public void onError(String message) {
+                DownloadHistoryStore.add(activity, installedVersion, "backup", "failed", message);
+                postError("Автоматическая резервная копия не создана. Установка отменена: " + message);
+            }
+        });
+    }
+
+    private GameVersion findExistingVersion(String versionName) {
+        try {
+            VersionManager manager = VersionManager.get(activity);
+            for (GameVersion item : manager.getCustomVersions()) {
+                if (versionName.equals(item.versionCode)) return item;
+            }
+            for (GameVersion item : manager.getInstalledVersions()) {
+                if (versionName.equals(item.versionCode)) return item;
+            }
+        } catch (Exception ignored) { }
+        return null;
+    }
+
+    private void installDownloadedApk(File apkFile, String installedVersion) {
+        Uri apkUri = Uri.fromFile(apkFile);
+        final String dirName = "Minecraft_" + installedVersion;
         ApkInstaller installer = new ApkInstaller(activity, executor, new ApkInstaller.InstallCallback() {
             @Override public void onProgress(int progress) { postProgress(progress, "Установка: " + progress + "%"); }
             @Override public void onSuccess(String vName) {
+                DownloadHistoryStore.add(activity, installedVersion, "install", "completed", vName);
                 postUi(() -> {
                     if (progressDialog.isShowing()) progressDialog.dismiss();
-                    if (apkFile.exists()) apkFile.delete();
+                    deleteQuietly(apkFile);
                     Toast.makeText(activity, "Установка завершена: " + vName, Toast.LENGTH_SHORT).show();
                     VersionManager.get(activity).loadAllVersions();
                     if (activity instanceof org.levimc.launcher.ui.activities.InstancesActivity) {
@@ -148,7 +253,8 @@ public class ApkDownloadManager {
                 });
             }
             @Override public void onError(String errorMsg) {
-                if (apkFile.exists()) apkFile.delete();
+                deleteQuietly(apkFile);
+                DownloadHistoryStore.add(activity, installedVersion, "install", "failed", errorMsg);
                 postError("Ошибка установки: " + errorMsg);
             }
         });
@@ -184,6 +290,17 @@ public class ApkDownloadManager {
         });
     }
 
+    private static void deleteQuietly(File file) {
+        if (file != null && file.exists()) {
+            try { file.delete(); } catch (Exception ignored) { }
+        }
+    }
+
+    private static String extractVersion(String fileName) {
+        if (fileName == null) return "";
+        return fileName.replace("minecraft_", "").replace(".apk", "");
+    }
+
     private static String formatMb(long bytes) {
         return String.format(Locale.getDefault(), "%.1f MB", bytes / 1048576.0);
     }
@@ -192,5 +309,5 @@ public class ApkDownloadManager {
         return error.getMessage() == null ? error.getClass().getSimpleName() : error.getMessage();
     }
 
-    private static final class DownloadCancelledException extends IOException {}
+    private static final class DownloadCancelledException extends IOException { }
 }

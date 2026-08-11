@@ -761,5 +761,5 @@ Quá trình chuyển đổi phải hoàn tất trước khi LeviLauncher có th�
     <string name="clear">Xóa</string>
 
     <string name="unsupported_version_title">Phiên bản không được hỗ trợ</string>
-    <string name="unsupported_version_msg">Trình khởi chạy này không hỗ trợ các phiên bản Minecraft cũ hơn 1.21.80</string>
+    <string name="unsupported_version_msg">Trình khởi chạy này không hỗ trợ các phiên bản Minecraft cũ hơn 1.16.0</string>
 </resources>

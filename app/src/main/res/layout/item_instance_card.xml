@@ -76,4 +76,15 @@
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/card_metadata"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/misans"
+        android:textColor="@color/text_secondary"
+        android:textSize="10sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
 </LinearLayout>

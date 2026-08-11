@@ -775,5 +775,5 @@ LeviLauncher\'ın devam edebilmesi için taşımanın tamamlanması gerekiyor.</
     <string name="clear">Temizle</string>
 
     <string name="unsupported_version_title">Desteklenmeyen Sürüm</string>
-    <string name="unsupported_version_msg">Bu başlatıcı 1.21.80\'den eski Minecraft sürümlerini desteklemiyor.</string>
+    <string name="unsupported_version_msg">Bu başlatıcı 1.16.0\'den eski Minecraft sürümlerini desteklemiyor.</string>
 </resources>

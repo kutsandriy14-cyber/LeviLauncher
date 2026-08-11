@@ -18,6 +18,7 @@ public class OnlineVersionAdapter extends RecyclerView.Adapter<OnlineVersionAdap
         public String version;
         public String url;
         public boolean isBeta;
+        public long sizeBytes = -1L;
 
         public OnlineVersion(String version, String url, boolean isBeta) {
             this.version = version;
@@ -50,9 +51,14 @@ public class OnlineVersionAdapter extends RecyclerView.Adapter<OnlineVersionAdap
         OnlineVersion item = versions.get(position);
         holder.versionCode.setText(item.version);
         holder.versionName.setText("Minecraft_" + item.version);
+        holder.versionSize.setText(item.sizeBytes > 0L ? formatSize(item.sizeBytes) : "Size…");
         holder.btnInstall.setOnClickListener(v -> {
             if (listener != null) listener.onInstallClick(item);
         });
+    }
+
+    private static String formatSize(long bytes) {
+        return String.format(java.util.Locale.getDefault(), "%.1f MB", bytes / 1048576.0d);
     }
 
     @Override
@@ -61,12 +67,13 @@ public class OnlineVersionAdapter extends RecyclerView.Adapter<OnlineVersionAdap
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView versionCode, versionName, btnInstall;
+        TextView versionCode, versionName, versionSize, btnInstall;
 
         ViewHolder(View itemView) {
             super(itemView);
             versionCode = itemView.findViewById(R.id.version_code);
             versionName = itemView.findViewById(R.id.version_name);
+            versionSize = itemView.findViewById(R.id.version_size);
             btnInstall = itemView.findViewById(R.id.btn_install);
         }
     }

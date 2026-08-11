@@ -166,6 +166,7 @@ import okhttp3.OkHttpClient;
         closeLauncherRestartAfterFirstDraw();
         setupNavBar();
         setupManagersAndHandlers();
+        initLauncherDashboard();
         // Do not put network/update code on the critical first-frame path.
         // A failed updater must never prevent the launcher UI from opening.
         binding.getRoot().postDelayed(() -> {
@@ -560,6 +561,27 @@ import okhttp3.OkHttpClient;
             DynamicAnim.springAlphaTo(manageAction, 1f).start();
             DynamicAnim.springTranslationXTo(manageAction, 0f).start();
         }
+    }
+
+    private void initLauncherDashboard() {
+        boolean updatesConfigured = !BuildConfig.UPDATE_GITHUB_OWNER.isEmpty()
+                && !BuildConfig.UPDATE_GITHUB_REPO.isEmpty();
+        binding.updateStatusText.setText(updatesConfigured
+                ? getString(R.string.update_status_ready)
+                : getString(R.string.update_not_configured));
+        binding.checkUpdatesButton.setEnabled(updatesConfigured);
+        binding.checkUpdatesButton.setOnClickListener(v -> {
+            if (!updatesConfigured) {
+                Toast.makeText(this, R.string.update_not_configured, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            new GithubReleaseUpdater(this, BuildConfig.UPDATE_GITHUB_OWNER,
+                    BuildConfig.UPDATE_GITHUB_REPO, permissionResultLauncher).checkUpdate();
+        });
+        binding.openToolsButton.setOnClickListener(v ->
+                startActivity(new Intent(this, LauncherToolsActivity.class)));
+        DynamicAnim.applyPressScale(binding.checkUpdatesButton);
+        DynamicAnim.applyPressScale(binding.openToolsButton);
     }
 
     private void setupManagersAndHandlers() {
