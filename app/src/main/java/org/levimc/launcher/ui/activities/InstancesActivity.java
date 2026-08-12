@@ -1020,6 +1020,12 @@ public class InstancesActivity extends BaseActivity {
                     holder.typeTag.setBackgroundResource(R.drawable.bg_preview_tag);
                 }
             }
+            if (org.levimc.launcher.util.InstanceFeatureManager.isTestInstance(holder.itemView.getContext(), v)) {
+                holder.typeTag.setText("TEST");
+                int testColor = android.graphics.Color.rgb(245, 158, 11);
+                holder.typeTag.setTextColor(testColor);
+                holder.typeTag.setBackground(makeTagBackground(holder.itemView.getContext(), testColor));
+            }
             holder.typeTag.setVisibility(View.VISIBLE);
 
             String displayLabel;
@@ -1027,6 +1033,9 @@ public class InstancesActivity extends BaseActivity {
                 displayLabel = v.displayName;
             } else {
                 displayLabel = holder.itemView.getContext().getString(R.string.vanilla_prefix, v.versionCode != null ? v.versionCode : "");
+            }
+            if (org.levimc.launcher.util.InstanceFeatureManager.isTestInstance(holder.itemView.getContext(), v)) {
+                displayLabel = displayLabel + " · Test";
             }
             holder.displayName.setText(displayLabel);
             holder.metadata.setText(buildMetadata(holder.itemView.getContext(), v));

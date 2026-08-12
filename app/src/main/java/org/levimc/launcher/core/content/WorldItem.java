@@ -17,6 +17,8 @@ public class WorldItem extends ContentItem {
     private String worldName;
     private String gameMode;
     private long lastPlayed;
+    private long seed;
+    private long worldSize;
     private boolean isValid;
 
     public WorldItem(String name, File worldDir) {
@@ -43,6 +45,16 @@ public class WorldItem extends ContentItem {
 
     public String getWorldName() {
         return worldName;
+    }
+
+    public String getGameMode() { return gameMode == null ? "Unknown" : gameMode; }
+    public long getLastPlayed() { return lastPlayed; }
+    public long getSeed() { return seed; }
+    public long getWorldSize() { return worldSize; }
+    public String getWorldSizeLabel() {
+        if (worldSize < 1024L) return worldSize + " B";
+        if (worldSize < 1048576L) return String.format(java.util.Locale.getDefault(), "%.1f KB", worldSize / 1024.0);
+        return String.format(java.util.Locale.getDefault(), "%.1f MB", worldSize / 1048576.0);
     }
 
     private void loadWorldInfo() {
@@ -86,6 +98,9 @@ public class WorldItem extends ContentItem {
                     int gameModeInt = gameModeTag.getInt();
                     gameMode = getGameModeName(gameModeInt);
                 }
+                NbtTag seedTag = compound.get("RandomSeed");
+                if (seedTag == null) seedTag = compound.get("WorldSeed");
+                if (seedTag != null && seedTag.isNumeric()) seed = seedTag.getLong();
 
                 if (worldName == null || worldName.isEmpty() || worldName.equals(file.getName())) {
                     NbtTag levelNameTag = compound.get("LevelName");
@@ -107,6 +122,16 @@ public class WorldItem extends ContentItem {
         }
 
         lastPlayed = file.lastModified();
+        worldSize = calculateSize(file);
+    }
+
+    private long calculateSize(File source) {
+        if (source == null || !source.exists()) return 0L;
+        if (source.isFile()) return source.length();
+        long total = 0L;
+        File[] children = source.listFiles();
+        if (children != null) for (File child : children) total += calculateSize(child);
+        return total;
     }
 
     private String getGameModeName(int gameType) {

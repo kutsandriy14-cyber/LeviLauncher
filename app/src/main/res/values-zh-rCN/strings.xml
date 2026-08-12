@@ -433,7 +433,7 @@
     <string name="disable_launcher_login_and_continue">关闭</string>
     <string name="sign_in">登录</string>
     <string name="ms_account_subtitle_format">用户ID：%1$s • 更新：%2$s</string>
-    <string name="about_footer_github">GitHub: GitHub: user repository</string>
+    <string name="about_footer_github">GitHub: https://github.com/kutsandriy14-cyber/LeviLauncher</string>
 
     <string name="label_current_account">当前账号</string>
     <string name="label_other_accounts">其他账号</string>
@@ -731,7 +731,7 @@
     <string name="about_patreon">Patreon</string>
     <string name="about_source_title">源代码与开源</string>
     <string name="about_github_repo">GitHub · LeviLauncher</string>
-    <string name="about_github_org">Your GitHub</string>
+    <string name="about_github_org">LeviLauncher</string>
     <string name="about_license_note">许可证详情请参阅仓库中的 LICENSE。</string>
     <string name="about_contribute_title">参与贡献</string>
     <string name="about_contribute_desc">欢迎通过 Issues 或 Pull Requests 改进 LeviLauncher。</string>
@@ -766,5 +766,5 @@
     <string name="clear">清除</string>
 
     <string name="unsupported_version_title">不支持的版本</string>
-    <string name="unsupported_version_msg">此启动器不支持早于 1.16.0 的 Minecraft 版本。</string>
+    <string name="unsupported_version_msg">此启动器不支持早于 1.21.80 的 Minecraft 版本。</string>
 </resources>

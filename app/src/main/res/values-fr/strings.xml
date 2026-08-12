@@ -25,7 +25,7 @@
     <string name="about_title">☕ À propos</string>
     <string name="copyright">©2024–2026 LeviMC. Tous droits réservés.</string>
     <string name="font_license">Cette application utilise la police Misans.</string>
-    <string name="about_footer_github">GitHub : GitHub: user repository</string>
+    <string name="about_footer_github">GitHub : https://github.com/kutsandriy14-cyber/LeviLauncher</string>
     <string name="quick_actions_title">Actions rapides</string>
     <string name="content_mgmt_section_title">Gestion de contenu</string>
     <string name="misc_section_title">Divers</string>
@@ -644,7 +644,7 @@ La migration doit être terminée avant de continuer avec LeviLauncher.</string>
     <string name="about_patreon">Patreon</string>
     <string name="about_source_title">Code Source et Open Source</string>
     <string name="about_github_repo">GitHub · LeviLauncher</string>
-    <string name="about_github_org">Your GitHub</string>
+    <string name="about_github_org">LeviLauncher</string>
     <string name="about_license_note">Voir LICENSE dans le dépôt pour plus de détails.</string>
     <string name="about_contribute_title">Contribuer</string>
     <string name="about_contribute_desc">Les contributions (Issues/Pull Requests) sont les bienvenues.</string>
@@ -681,7 +681,7 @@ La migration doit être terminée avant de continuer avec LeviLauncher.</string>
     <string name="clear">Effacer</string>
 
     <string name="unsupported_version_title">Version non prise en charge</string>
-    <string name="unsupported_version_msg">Ce lanceur ne prend pas en charge les versions de Minecraft antérieures à 1.16.0.</string>
+    <string name="unsupported_version_msg">Ce lanceur ne prend pas en charge les versions de Minecraft antérieures à 1.21.80.</string>
     <!-- Mod Config -->
     <string name="mod_author_byline">par %s</string>
     <string name="mod_version_chip">Version %s</string>

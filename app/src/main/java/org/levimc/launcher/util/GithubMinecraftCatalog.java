@@ -1,5 +1,7 @@
 package org.levimc.launcher.util;
 
+import android.content.Context;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -45,6 +47,15 @@ public final class GithubMinecraftCatalog {
     }
 
     private GithubMinecraftCatalog() { }
+
+    public static void fetch(Context context, Callback callback) {
+        if (context != null && context.getSharedPreferences("launcher_options", Context.MODE_PRIVATE)
+                .getBoolean("local_only_mode", false)) {
+            callback.onError("Online catalog is disabled while Local-only mode is enabled.");
+            return;
+        }
+        fetch(callback);
+    }
 
     public static void fetch(Callback callback) {
         EXECUTOR.execute(() -> {

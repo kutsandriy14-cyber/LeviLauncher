@@ -89,6 +89,23 @@ public class InstanceSettingsActivity extends BaseActivity {
         if (backupButton != null) {
             backupButton.setOnClickListener(v -> confirmBackup());
         }
+        Button cloneButton = findViewById(R.id.btn_clone_instance);
+        SwitchMaterial testSwitch = findViewById(R.id.switch_test_instance);
+        Button historyButton = findViewById(R.id.btn_instance_history);
+        if (cloneButton != null) {
+            if (version.isInstalled) {
+                cloneButton.setEnabled(false);
+                cloneButton.setAlpha(0.4f);
+            } else {
+                cloneButton.setOnClickListener(v -> confirmClone());
+            }
+        }
+        if (testSwitch != null) {
+            testSwitch.setChecked(org.levimc.launcher.util.InstanceFeatureManager.isTestInstance(this, version));
+            testSwitch.setOnCheckedChangeListener((button, checked) ->
+                    org.levimc.launcher.util.InstanceFeatureManager.setTestLabel(this, version, checked));
+        }
+        if (historyButton != null) historyButton.setOnClickListener(v -> showChangeHistory());
         if (version.isInstalled) {
             btnDelete.setEnabled(false);
             btnDelete.setAlpha(0.4f);
@@ -176,9 +193,48 @@ public class InstanceSettingsActivity extends BaseActivity {
 
         versionManager.setInstanceVersionIsolation(version, switchIsolation.isChecked());
         versionManager.setInstanceLaunchVertically(version, switchLaunchVertically.isChecked());
+        org.levimc.launcher.util.InstanceFeatureManager.addHistory(this, version.directoryName,
+                "Instance settings saved", "Isolation=" + switchIsolation.isChecked() + ", vertical=" + switchLaunchVertically.isChecked());
 
         setResult(RESULT_OK);
         finish();
+    }
+
+    private void confirmClone() {
+        android.widget.CheckBox copyData = new android.widget.CheckBox(this);
+        int padding = (int) (18 * getResources().getDisplayMetrics().density);
+        copyData.setPadding(padding, 0, padding, 0);
+        copyData.setText("Copy worlds, settings, resource packs and mods");
+        copyData.setChecked(true);
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Clone instance")
+                .setMessage("Creates a separate custom Minecraft instance. The original instance is not changed.")
+                .setView(copyData)
+                .setPositiveButton("Clone", (dialog, which) -> {
+                    Toast.makeText(this, "Clone added to task queue…", Toast.LENGTH_SHORT).show();
+                    org.levimc.launcher.util.InstanceFeatureManager.cloneInstance(this, version, copyData.isChecked(),
+                            new org.levimc.launcher.util.InstanceFeatureManager.Callback() {
+                                @Override public void onSuccess(String message) { runOnUiThread(() -> {
+                                    Toast.makeText(InstanceSettingsActivity.this, message, Toast.LENGTH_LONG).show();
+                                    setResult(RESULT_OK);
+                                }); }
+                                @Override public void onError(String message) { runOnUiThread(() ->
+                                        Toast.makeText(InstanceSettingsActivity.this, message, Toast.LENGTH_LONG).show()); }
+                            });
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void showChangeHistory() {
+        java.util.List<String> entries = org.levimc.launcher.util.InstanceFeatureManager
+                .getRecentHistory(this, version.directoryName, 30);
+        String message = entries.isEmpty() ? "No recorded changes yet." : android.text.TextUtils.join("\n\n", entries);
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Instance change history")
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.confirm), null)
+                .show();
     }
 
     private void confirmDelete() {

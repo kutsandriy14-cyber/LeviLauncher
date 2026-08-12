@@ -19,13 +19,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /** Downloads Minecraft APKs safely: partial files survive a pause only, not an error or cancellation. */
 public class ApkDownloadManager {
     private final Activity activity;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = LauncherTaskQueue.executor();
     private final InstallProgressDialog progressDialog;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Object pauseLock = new Object();
@@ -48,6 +47,11 @@ public class ApkDownloadManager {
 
     /** The catalog passes its discovered version so an incorrectly named asset cannot be installed silently. */
     public void downloadAndInstall(String urlString, String fileName, String expectedMinecraftVersion) {
+        if (activity.getSharedPreferences("launcher_options", android.content.Context.MODE_PRIVATE)
+                .getBoolean("local_only_mode", false)) {
+            Toast.makeText(activity, "Local-only mode is enabled. Import a local APK instead.", Toast.LENGTH_LONG).show();
+            return;
+        }
         if (activeDownload != null && !activeDownload.isDone()) {
             Toast.makeText(activity, "Загрузка уже выполняется", Toast.LENGTH_SHORT).show();
             return;
@@ -62,7 +66,7 @@ public class ApkDownloadManager {
         progressDialog.setStatusText("Подключение...");
         progressDialog.setProgress(0);
         if (!progressDialog.isShowing()) progressDialog.show();
-        activeDownload = executor.submit(() -> download(urlString, fileName));
+        activeDownload = LauncherTaskQueue.submitFuture(() -> download(urlString, fileName));
     }
 
     /** Cancelling deletes the unfinished .part file so no invalid APK is left behind. */

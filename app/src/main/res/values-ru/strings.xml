@@ -21,7 +21,7 @@
     <string name="about_title">☕ О приложении</string>
     <string name="copyright">©2024–2026 LeviMC. Все права защищены.</string>
     <string name="font_license">Это приложение использует шрифт Misans.</string>
-    <string name="about_footer_github">GitHub: GitHub: user repository</string>
+    <string name="about_footer_github">GitHub: https://github.com/kutsandriy14-cyber/LeviLauncher</string>
     <string name="quick_actions_title">Быстрые действия</string>
     <string name="content_management_subtitle">Управление мирами, ресурсами и аддонами</string>
     <string name="import_apk_subtitle">Установка Minecraft из файла APK или APKS</string>
@@ -670,7 +670,7 @@
     <string name="about_patreon">Patreon</string>
     <string name="about_source_title">Исходный код и открытый исходный код</string>
     <string name="about_github_repo">GitHub · LeviLauncher</string>
-    <string name="about_github_org">Your GitHub</string>
+    <string name="about_github_org">LeviLauncher</string>
     <string name="about_license_note">Подробности лицензии смотрите в файле LICENSE в репозитории.</string>
     <string name="about_contribute_title">Участие в разработке</string>
     <string name="about_contribute_desc">Вклад через Issues или Pull Requests приветствуется и помогает улучшать LeviLauncher.</string>
@@ -705,7 +705,7 @@
     <string name="clear">Очистить</string>
 
     <string name="unsupported_version_title">Неподдерживаемая версия</string>
-    <string name="unsupported_version_msg">Этот лаунчер не поддерживает версии Minecraft старше 1.16.0.</string>
+    <string name="unsupported_version_msg">Этот лаунчер не поддерживает версии Minecraft старше 1.21.80.</string>
     <!-- Mod Config -->
     <string name="mod_author_byline">от %s</string>
     <string name="mod_version_chip">Версия %s</string>

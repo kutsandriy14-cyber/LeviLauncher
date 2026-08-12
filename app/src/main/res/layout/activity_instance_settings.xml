@@ -330,6 +330,41 @@
                             android:textColor="@color/on_primary"
                             android:backgroundTint="@color/primary"
                             android:textAllCaps="false" />
+
+                        <Button
+                            android:id="@+id/btn_clone_instance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginTop="10dp"
+                            android:paddingHorizontal="20dp"
+                            android:text="Clone instance"
+                            android:fontFamily="@font/misans"
+                            android:textSize="13sp"
+                            android:textColor="@color/on_primary"
+                            android:backgroundTint="@color/primary"
+                            android:textAllCaps="false" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_test_instance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Mark as test instance"
+                            android:fontFamily="@font/misans"
+                            android:textColor="@color/on_surface" />
+
+                        <Button
+                            android:id="@+id/btn_instance_history"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginTop="8dp"
+                            android:paddingHorizontal="20dp"
+                            android:text="Change history"
+                            android:fontFamily="@font/misans"
+                            android:textSize="13sp"
+                            android:textColor="@color/on_primary"
+                            android:backgroundTint="@color/primary"
+                            android:textAllCaps="false" />
                     </LinearLayout>
 
                     <LinearLayout

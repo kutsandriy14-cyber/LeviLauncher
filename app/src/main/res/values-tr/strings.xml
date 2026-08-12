@@ -24,7 +24,7 @@
     <string name="about_title">☕ Hakkında</string>
     <string name="copyright">©2024–2026 LeviMC. Tüm hakları saklıdır.</string>
     <string name="font_license">Bu uygulama Misans yazı tipini kullanmaktadır.</string>
-    <string name="about_footer_github">GitHub: GitHub: user repository</string>
+    <string name="about_footer_github">GitHub: https://github.com/kutsandriy14-cyber/LeviLauncher</string>
     <string name="quick_actions_title">Hızlı İşlemler</string>
     <string name="content_mgmt_section_title">İçerik Yönetimi</string>
     <string name="misc_section_title">Çeşitli</string>
@@ -738,7 +738,7 @@ LeviLauncher\'ın devam edebilmesi için taşımanın tamamlanması gerekiyor.</
     <string name="about_patreon">Patreon</string>
     <string name="about_source_title">Kaynak Kodu ve Açık Kaynak</string>
     <string name="about_github_repo">GitHub · LeviLauncher</string>
-    <string name="about_github_org">Your GitHub</string>
+    <string name="about_github_org">LeviLauncher</string>
     <string name="about_license_note">Lisans ayrıntıları için depo içindeki LICENSE dosyasına bakın.</string>
     <string name="about_contribute_title">Katkıda Bulun</string>
     <string name="about_contribute_desc">LeviLauncher\'ı geliştirmek için Issue veya Pull Request aracılığıyla katkıda bulunabilirsiniz.</string>
@@ -775,5 +775,5 @@ LeviLauncher\'ın devam edebilmesi için taşımanın tamamlanması gerekiyor.</
     <string name="clear">Temizle</string>
 
     <string name="unsupported_version_title">Desteklenmeyen Sürüm</string>
-    <string name="unsupported_version_msg">Bu başlatıcı 1.16.0\'den eski Minecraft sürümlerini desteklemiyor.</string>
+    <string name="unsupported_version_msg">Bu başlatıcı 1.21.80\'den eski Minecraft sürümlerini desteklemiyor.</string>
 </resources>

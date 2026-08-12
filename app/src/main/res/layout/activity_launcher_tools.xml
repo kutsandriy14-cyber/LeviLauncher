@@ -123,6 +123,20 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tools_device_readiness"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/misans"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10dp"
+                android:text="Device readiness, storage and permissions ›"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp" />
+
+            <TextView
                 android:id="@+id/tools_diagnostics"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"

@@ -19,14 +19,10 @@ import okhttp3.Response;
 
 public class AboutActivity extends BaseActivity {
 
-    private static final String AVATAR_URL = "https://avatars.githubusercontent.com/u/62042544?v=4";
-    private static final String URL_AFDIAN = "https://afdian.com/a/DreamGuXiang";
-    private static final String URL_PATREON = "https://www.patreon.com/c/DreamGuXiang";
-    private static final String URL_REPO = "";
-    private static final String URL_ORG = "";
-    private static final String URL_ISSUES = "";
-    private static final String MAINTAINER_AVATAR_URL = "https://yt3.googleusercontent.com/ft4khqXZ_fQn-DbSLg91kQy3_JUQ_73rbg18nOcmMtunX5bq25jzrThWQAk9YsFkTKFesUL7sg8=s160-c-k-c0x00ffffff-no-rj";
-    private static final String URL_YOUTUBE = "https://www.youtube.com/c/mrpokeg";
+    private static final String AVATAR_URL = "https://github.com/kutsandriy14-cyber.png";
+    private static final String URL_REPO = "https://github.com/kutsandriy14-cyber/LeviLauncher";
+    private static final String URL_ORG = "https://github.com/kutsandriy14-cyber";
+    private static final String URL_ISSUES = "https://github.com/kutsandriy14-cyber/LeviLauncher/issues";
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final OkHttpClient client = new OkHttpClient();
@@ -73,7 +69,6 @@ public class AboutActivity extends BaseActivity {
 
     private void loadAvatars() {
         com.microsoft.xbox.idp.toolkit.CircleImageView avatar = findViewById(R.id.author_avatar);
-        com.microsoft.xbox.idp.toolkit.CircleImageView maintainerAvatar = findViewById(R.id.maintainer_avatar);
 
         executor.execute(() -> {
             try {
@@ -87,44 +82,19 @@ public class AboutActivity extends BaseActivity {
                     }
                 }
             } catch (Exception ignored) {}
-
-            try {
-                if (maintainerAvatar != null) {
-                    Response resp = client.newCall(new Request.Builder().url(MAINTAINER_AVATAR_URL).build()).execute();
-                    if (resp.isSuccessful() && resp.body() != null) {
-                        Bitmap bmp = BitmapFactory.decodeStream(resp.body().byteStream());
-                        runOnUiThread(() -> {
-                            if (bmp != null) maintainerAvatar.setImageBitmap(bmp);
-                        });
-                    }
-                }
-            } catch (Exception ignored) {}
         });
     }
 
     private void setupLinks() {
-        String owner = org.levimc.launcher.BuildConfig.UPDATE_GITHUB_OWNER;
-        String repo = org.levimc.launcher.BuildConfig.UPDATE_GITHUB_REPO;
-        String userRepo = owner.isEmpty() || repo.isEmpty() ? "" : "https://github.com/" + owner + "/" + repo;
-        String userOrg = owner.isEmpty() ? "" : "https://github.com/" + owner;
-        String userIssues = userRepo.isEmpty() ? "" : userRepo + "/issues";
-        setupLinkButton(R.id.btn_afdian, URL_AFDIAN);
-        setupLinkButton(R.id.btn_patreon, URL_PATREON);
-        setupLinkButton(R.id.btn_github_repo, userRepo);
-        setupLinkButton(R.id.btn_github_org, userOrg);
-        setupLinkButton(R.id.btn_issues, userIssues);
-        setupLinkButton(R.id.btn_star_fork, userRepo);
-        setupLinkButton(R.id.btn_youtube_maintainer, URL_YOUTUBE);
+        setupLinkButton(R.id.btn_github_repo, URL_REPO);
+        setupLinkButton(R.id.btn_github_org, URL_ORG);
+        setupLinkButton(R.id.btn_issues, URL_ISSUES);
+        setupLinkButton(R.id.btn_star_fork, URL_REPO);
     }
 
     private void setupLinkButton(int viewId, String url) {
         TextView btn = findViewById(viewId);
         if (btn == null) return;
-        if (url == null || url.isEmpty()) {
-            btn.setEnabled(false);
-            btn.setAlpha(0.45f);
-            return;
-        }
         btn.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));

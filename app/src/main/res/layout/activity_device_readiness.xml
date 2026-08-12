@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="18dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Device readiness"
+            android:textColor="@color/on_surface"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/misans" />
+
+        <Button
+            android:id="@+id/btn_refresh_readiness"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:text="Refresh"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:id="@+id/readiness_storage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:padding="16dp"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"
+                android:fontFamily="@font/misans" />
+
+            <TextView
+                android:id="@+id/readiness_permissions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/card_background"
+                android:padding="16dp"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"
+                android:fontFamily="@font/misans" />
+
+            <Button
+                android:id="@+id/btn_open_permissions"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:text="Open app permissions"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:id="@+id/readiness_queue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/card_background"
+                android:padding="16dp"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"
+                android:fontFamily="@font/misans" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_local_only"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Local-only mode"
+                android:textColor="@color/on_surface"
+                android:fontFamily="@font/misans" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Disables online catalog and download actions. Local APK imports, worlds and backups remain available."
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:fontFamily="@font/misans" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

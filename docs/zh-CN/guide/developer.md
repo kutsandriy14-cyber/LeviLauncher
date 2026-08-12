@@ -27,7 +27,7 @@ example-mod/
 {
   "type": "preload-native",
   "name": "Example Mod",
-  "author": "LeviLauncher Team",
+  "author": "LeviLauncher",
   "version": "1.0.0",
   "entry": "libexample.so",
   "minecraft_versions": ["1.26.20", "1.26.2*", "1.26.*"]

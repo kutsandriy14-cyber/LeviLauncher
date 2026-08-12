@@ -13,8 +13,6 @@ set(PRELOADER_SOURCES
         src/pl/memory/Signature.cpp
         src/pl/runtime/InputBridge.cpp
         src/pl/runtime/JavaRuntime.cpp
-        src/pl/runtime/GameActivityBridge.cpp
-        src/pl/runtime/LegacyNativeActivityBridge.cpp
 )
 
 add_library(preloader SHARED ${PRELOADER_SOURCES})
@@ -42,9 +40,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json boost_pfr magic_enum)
 
-# GameActivity resolves initializeNativeCode in libpreloader.so because this is
-# the library named by the launcher activity. GameActivityBridge.cpp forwards
-# that call to the loaded Minecraft runtime without pulling a second app glue.
 find_library(log-lib log)
 find_library(android-lib android)
 find_library(egl-lib EGL)

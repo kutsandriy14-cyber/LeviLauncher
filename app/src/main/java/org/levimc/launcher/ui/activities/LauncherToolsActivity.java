@@ -24,6 +24,7 @@ public class LauncherToolsActivity extends BaseActivity {
         bind(R.id.tools_backups, BackupCenterActivity.class);
         bind(R.id.tools_content, ContentManagementActivity.class);
         bind(R.id.tools_download_history, DownloadHistoryActivity.class);
+        bind(R.id.tools_device_readiness, DeviceReadinessActivity.class);
         bind(R.id.tools_diagnostics, DiagnosticsActivity.class);
         bind(R.id.tools_mod_profiles, ModProfilesActivity.class);
         bind(R.id.tools_settings, SettingsActivity.class);

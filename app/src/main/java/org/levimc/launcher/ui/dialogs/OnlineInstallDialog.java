@@ -119,7 +119,7 @@ public class OnlineInstallDialog extends Dialog {
 
     private void loadPublishedCatalog(TextView catalogStatus) {
         catalogStatus.setText("Loading published APK catalog…");
-        GithubMinecraftCatalog.fetch(new GithubMinecraftCatalog.Callback() {
+        GithubMinecraftCatalog.fetch(getContext(), new GithubMinecraftCatalog.Callback() {
             @Override public void onSuccess(List<OnlineVersionAdapter.OnlineVersion> versions) {
                 mainHandler.post(() -> {
                     if (!isShowing()) return;
@@ -136,7 +136,7 @@ public class OnlineInstallDialog extends Dialog {
             @Override public void onError(String message) {
                 mainHandler.post(() -> {
                     if (!isShowing()) return;
-                    catalogStatus.setText("Could not load APK catalog: " + message);
+                    catalogStatus.setText("Online catalog unavailable: " + message);
                     filterVersions();
                 });
             }

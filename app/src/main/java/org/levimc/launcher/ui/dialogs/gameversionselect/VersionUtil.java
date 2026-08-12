@@ -10,10 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class VersionUtil {
-    private static final int MIN_MAJOR = 1;
-    private static final int MIN_MINOR = 16;
-    private static final int MIN_PATCH = 0;
-
 
     public static class GroupByResult {
         public LinkedHashMap<String, VersionGroup> validGroups = new LinkedHashMap<>();
@@ -105,16 +101,12 @@ public class VersionUtil {
     }
     
     public static boolean isValidVersion(String v) {
-        if (v == null || v.trim().isEmpty()) return false;
-        String[] arr = v.trim().split("\\.");
+        String[] arr = v.split("\\.");
         for (String s : arr) {
-            if (!s.matches("\\d+")) return false;
+            if (!s.matches("\\d+")) {
+                return false;
+            }
         }
-        int major = arr.length > 0 ? Integer.parseInt(arr[0]) : 0;
-        int minor = arr.length > 1 ? Integer.parseInt(arr[1]) : 0;
-        int patch = arr.length > 2 ? Integer.parseInt(arr[2]) : 0;
-        return major > MIN_MAJOR
-                || (major == MIN_MAJOR && (minor > MIN_MINOR
-                || (minor == MIN_MINOR && patch >= MIN_PATCH)));
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 # Privacy Policy
 
-This privacy policy applies to the LeviLauncher app for mobile devices, together with any related services operated by LeviLauncher Team (collectively, the "Application"). LeviLauncher Team is hereby referred to as the "Service Provider".
+This privacy policy applies to the LeviLauncher app for mobile devices, together with any related services operated by LeviLauncher (collectively, the "Application"). LeviLauncher is hereby referred to as the "Service Provider".
 
 ## Information Collection and Use
 

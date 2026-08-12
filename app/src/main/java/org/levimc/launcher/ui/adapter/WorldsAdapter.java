@@ -54,9 +54,10 @@ public class WorldsAdapter extends RecyclerView.Adapter<WorldsAdapter.WorldViewH
         WorldItem world = worlds.get(position);
 
         holder.worldName.setText(world.getWorldName());
-        holder.worldSize.setText(holder.itemView.getContext().getString(R.string.world_size, world.getFormattedSize()));
+        holder.worldSize.setText(holder.itemView.getContext().getString(R.string.world_size, world.getWorldSizeLabel()));
         holder.worldLastPlayed.setText(holder.itemView.getContext().getString(R.string.world_last_played, world.getFormattedLastModified()));
-        holder.worldDescription.setText(world.getDescription());
+        String seedText = world.getSeed() == 0L ? "Seed unavailable" : "Seed: " + world.getSeed();
+        holder.worldDescription.setText("Mode: " + world.getGameMode() + " · " + seedText);
 
         holder.editButton.setOnClickListener(v -> {
             if (onWorldActionListener != null) {
